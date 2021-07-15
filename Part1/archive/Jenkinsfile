@@ -1,0 +1,35 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out...'
+                git 'https://bitbucket.org/manel_rga/devops-20-21-1201770/src/master/CA5/Part1/'
+            }
+        }
+        stage('Assemble') {
+            steps {
+                echo 'Assembling...'
+                dir ("CA5/Part1/") {
+                    sh './gradlew clean assemble'
+                }
+            }
+        }
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                dir ("CA5/Part1/") {
+                    sh './gradlew test'
+                }
+            }
+        }
+
+        stage('Archiving') {
+            steps {
+                echo 'Archiving...'
+                archiveArtifacts 'CA5/Part1/build/distributions/*'
+            }
+        }
+    }
+}

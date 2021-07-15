@@ -1,0 +1,46 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.4'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'java'
+	id "org.siouan.frontend" version "1.4.1"
+	id 'war'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-rest'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	runtimeOnly 'com.h2database:h2'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+}
+
+test {
+	useJUnitPlatform()
+}
+
+frontend {
+	nodeVersion = "12.13.1"
+	assembleScript = "run webpack"
+}
+
+task copyGeneratedJar(type: Copy) {
+	from 'build/libs/demo-0.0.1-SNAPSHOT.jar'
+	into 'dist'
+}
+
+task deleteWebPack(type: Delete) {
+	delete 'src/main/resources/static/built/'
+}
+
+clean {
+	dependsOn 'deleteWebPack'
+}

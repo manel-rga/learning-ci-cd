@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Checking out...'
+                git 'https://bitbucket.org/manel_rga/devops-20-21-1201770/src/master/CA5/Part2/'
+            }
+        }
+        stage('Assemble') {
+            steps {
+                echo 'Assembling...'
+                dir ("CA5/Part2/") {
+                    sh './gradlew clean assemble'
+                }
+            }
+        }
+
+        stage('Javadoc') {
+            steps {
+                echo 'Creating Javadoc...'
+                dir ("CA5/Part2/") {
+                    sh './gradlew javadoc'
+                    javadoc javadocDir: 'CA5/Part2/build/javadoc', keepAll: false
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                echo 'Testing...'
+                dir ("CA5/Part2/") {
+                    sh './gradlew test'
+                }
+            }
+        }
+
+        stage('Archiving') {
+            steps {
+                echo 'Archiving...'
+                archiveArtifacts 'CA5/Part2/build/distributions/*'
+            }
+        }
+    }
+}
